@@ -1,0 +1,57 @@
+<div class="flex justify-end gap-4 mb-8">
+  <button
+    class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+    (click)="logout()"
+  >
+    Logout
+  </button>
+</div>
+<div
+  class="md:ml-6 grid grid-cols-[max-content_minmax(0,max-content)_max-content] gap-x-4 md:gap-x-8 gap-y-4 items-center"
+>
+  <!-- Username row -->
+  <div class="bg-sand-light rounded-md drop-shadow-lg p-3 col-span-3 grid grid-cols-subgrid items-center">
+    <div>Username:</div>
+    <div class="truncate" title="{{ authService.user?.username }}">{{ authService.user?.username }}</div>
+    <div></div>
+  </div>
+
+  <!-- Email row -->
+  <div class="bg-sand-light rounded-md drop-shadow-lg p-3 col-span-3 grid grid-cols-subgrid items-center">
+    <div>Email:</div>
+    <div class="truncate" title="{{ authService.user?.email }}">{{ authService.user?.email }}</div>
+    <div>
+      <button
+        class="p-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        (click)="showChangeEmailOverlay = true"
+      >
+        <img src="assets/icons/gear.svg" alt="Edit" class="w-5 h-5 brightness-0 invert" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Password row -->
+  <div class="bg-sand-light rounded-md drop-shadow-lg p-3 col-span-3 grid grid-cols-subgrid items-center">
+    <div>Password:</div>
+    <div class="truncate" title="Password">••••••••</div>
+    <div>
+      <button
+        class="p-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        (click)="showChangePasswordOverlay = true"
+      >
+        <img src="assets/icons/gear.svg" alt="Edit" class="w-5 h-5 brightness-0 invert" />
+      </button>
+    </div>
+  </div>
+</div>
+
+@if (showChangePasswordOverlay) {
+  <app-change-password
+    (close)="showChangePasswordOverlay = false"
+    (passwordChanged)="onPasswordChanged($event)"
+  ></app-change-password>
+}
+
+@if (showChangeEmailOverlay) {
+  <app-change-email (close)="showChangeEmailOverlay = false" (emailChanged)="onEmailChanged($event)"></app-change-email>
+}

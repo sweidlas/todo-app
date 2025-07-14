@@ -1,0 +1,28 @@
+<div #squareContainer class="square_container">
+  <div *ngIf="showOverlay" class="stacked backdrop_corners backdrop-blur-sm"></div>
+  <div class="stacked content_overlay" [style.display]="showOverlay ? 'block' : 'none'">
+    <ng-content></ng-content>
+  </div>
+  <div class="stacked cube_container" [style.display]="!showOverlay ? 'block' : 'none'">
+    <div #cube class="cube">
+      <div class="face front backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.front?.component"></ng-container>
+      </div>
+      <div class="face back backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.back?.component"></ng-container>
+      </div>
+      <div class="face right backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.right?.component"></ng-container>
+      </div>
+      <div class="face left backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.left?.component"></ng-container>
+      </div>
+      <div class="face top backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.top?.component"></ng-container>
+      </div>
+      <div class="face bottom backdrop-blur-sm">
+        <ng-container *ngComponentOutlet="cubeSides.bottom?.component"></ng-container>
+      </div>
+    </div>
+  </div>
+</div>

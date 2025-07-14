@@ -1,0 +1,117 @@
+// Breakpoint variables
+$breakpoint-xsmall: 360px;
+$breakpoint-small: 480px;
+$breakpoint-medium: 768px;
+$breakpoint-large: 992px;
+$breakpoint-xlarge: 1200px;
+
+// Mixins for specific breakpoints
+
+// Extra small screens (mobile, < 360px)
+@mixin xsmall-only {
+  @media (max-width: $breakpoint-xsmall - 1) {
+    @content;
+  }
+}
+
+// Small mobile screens (< 480px)
+@mixin small-only {
+  @media (max-width: $breakpoint-small - 1) {
+    @content;
+  }
+}
+
+// Small screens specifically (480px - 767px)
+@mixin small-specific {
+  @media (min-width: $breakpoint-small) and (max-width: $breakpoint-medium - 1) {
+    @content;
+  }
+}
+
+// Medium screens specifically (768px - 991px)
+@mixin medium-specific {
+  @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large - 1) {
+    @content;
+  }
+}
+
+// Large screens specifically (992px - 1199px)
+@mixin large-specific {
+  @media (min-width: $breakpoint-large) and (max-width: $breakpoint-xlarge - 1) {
+    @content;
+  }
+}
+
+// Extra large screens (1200px+)
+@mixin xlarge-up {
+  @media (min-width: $breakpoint-xlarge) {
+    @content;
+  }
+}
+
+// Range-based mixins (min to max)
+@mixin breakpoint-range($min, $max) {
+  @media (min-width: $min) and (max-width: $max - 1) {
+    @content;
+  }
+}
+
+// From breakpoint and up
+@mixin breakpoint-up($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
+
+// From breakpoint and down
+@mixin breakpoint-down($breakpoint) {
+  @media (max-width: $breakpoint - 1) {
+    @content;
+  }
+}
+
+// Special case mixins
+
+// Landscape orientation on mobile
+@mixin mobile-landscape {
+  @media (max-height: $breakpoint-small - 1) and (orientation: landscape) {
+    @content;
+  }
+}
+
+// Ultra-small screens or extreme landscape
+@mixin ultra-compact {
+  @media (max-height: $breakpoint-xsmall - 1) and (orientation: landscape) {
+    @content;
+  }
+}
+
+// Safe area inset support (for notches and home indicators)
+@mixin safe-area-bottom {
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    @content;
+  }
+}
+
+// Combined specific use-case mixins
+
+// Mobile screens (up to medium)
+@mixin mobile {
+  @media (max-width: $breakpoint-medium - 1) {
+    @content;
+  }
+}
+
+// Tablet screens (medium to large)
+@mixin tablet {
+  @media (min-width: $breakpoint-medium) and (max-width: $breakpoint-large - 1) {
+    @content;
+  }
+}
+
+// Desktop screens (large and above)
+@mixin desktop {
+  @media (min-width: $breakpoint-large) {
+    @content;
+  }
+}

@@ -1,0 +1,106 @@
+@import "bootstrap";
+
+:host {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+img {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.loading_screen {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+  object-fit: cover;
+  z-index: 2;
+}
+
+.main {
+  top: 150px;
+  right: 200px;
+  bottom: 200px;
+  left: 200px;
+  position: fixed;
+  width: auto;
+  height: auto;
+  z-index: 1;
+
+  // Extra large screens (1200px+)
+  @include xlarge-up {
+    top: 50px;
+    right: 50px;
+    bottom: 138px;
+    left: 50px;
+  }
+
+  // Large screens (992px - 1199px)
+  @include large-specific {
+    top: 50px;
+    right: 50px;
+    bottom: 131px;
+    left: 50px;
+  }
+
+  // Medium screens (tablets, 768px - 991px)
+  @include medium-specific {
+    top: 50px;
+    right: 50px;
+    bottom: 120px;
+    left: 50px;
+  }
+
+  // Small screens (large mobile, 480px - 767px)
+  @include small-specific {
+    top: 20px;
+    right: 30px;
+    bottom: 116px;
+    left: 30px;
+  }
+
+  // Extra small screens (small mobile, < 480px)
+  @include small-only {
+    top: 16px;
+    right: 16px;
+    bottom: 104px;
+    left: 16px;
+  }
+
+  // Very small screens (< 360px)
+  @include xsmall-only {
+    top: 16px;
+    right: 16px;
+    bottom: 104px;
+    left: 16px;
+  }
+
+  // Landscape orientation on mobile
+  @include mobile-landscape {
+    top: 16px;
+    right: 132px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  // Ultra-small screens or extreme landscape - hide labels
+  @include ultra-compact {
+    top: 16px;
+    right: 112px;
+    bottom: 16px;
+    left: 16px;
+  }
+}

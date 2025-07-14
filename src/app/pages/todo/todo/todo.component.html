@@ -1,0 +1,50 @@
+<div class="flex-none flex justify-between items-center pb-2 mb-2 border-b border-white/20">
+  <span class="text-2xl font-semibold text-white drop-shadow-lg">Todos</span>
+  <button class="text-xl font-semibold text-white drop-shadow-lg rounded-md bg-blue-500 p-2" (click)="createTodo()">
+    Create
+  </button>
+</div>
+<div class="flex items-center gap-2 justify-between py-4">
+  <label class="inline-flex ml-1 items-center cursor-pointer">
+    <input
+      type="checkbox"
+      class="sr-only peer"
+      [ngModel]="showCompleted()"
+      (ngModelChange)="showCompleted.set($event)"
+    />
+    <div
+      class="relative mr-3 w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+    ></div>
+    <span class="text-sm font-medium text-white">
+      {{ showCompleted() ? 'Completed' : 'Not Completed' }}
+    </span>
+  </label>
+  <div class="relative flex-shrink min-w-0">
+    <select
+      class="bg-gray-700 text-white text-sm rounded-md px-3 py-2 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none appearance-none pr-8 w-full min-w-0"
+      [ngModel]="sortOption()"
+      (ngModelChange)="onSortChange($event)"
+    >
+      @for (option of sortOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+      }
+    </select>
+    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="flex-1 flex flex-col overflow-auto" (scroll)="onScroll($event)" #scrollContainer>
+  @for (item of paginatedTodos(); track item.id) {
+    <app-todo-item
+      [todo]="item"
+      [config]="todoItemConfig"
+      [locale]="locale"
+      (itemClick)="selectTodo($event)"
+    ></app-todo-item>
+  }
+</div>
+
+<app-edit-todo [show]="todoOverlay" [selectedTodo]="selectedTodo" (emitClose)="closeOverlay()"></app-edit-todo>

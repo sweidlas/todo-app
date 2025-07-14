@@ -1,0 +1,269 @@
+<div class="min-h-screen flex items-center justify-center card py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-xl min-h-[600px] w-full space-y-8 p-10 bg-gray-50 rounded-3xl shadow-2xl">
+    <!-- Header -->
+    <div class="text-center">
+      <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+        {{
+          currentMode === 'login'
+            ? 'Sign in to your account'
+            : currentMode === 'signup'
+              ? 'Create your account'
+              : 'Verify your email'
+        }}
+      </h2>
+    </div>
+
+    <!-- Mode Toggle Buttons (Login/Signup only) -->
+    <div *ngIf="currentMode !== 'verify'" class="flex justify-center space-x-4 mb-6">
+      <button
+        (click)="switchMode('login')"
+        [class]="
+          'px-4 py-2 text-sm font-medium rounded-md transition-colors ' +
+          (currentMode === 'login' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+        "
+      >
+        Login
+      </button>
+      <button
+        (click)="switchMode('signup')"
+        [class]="
+          'px-4 py-2 text-sm font-medium rounded-md transition-colors ' +
+          (currentMode === 'signup' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300')
+        "
+      >
+        Sign Up
+      </button>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="rounded-md bg-green-50 p-4 mb-4">
+      <div class="flex">
+        <div class="ml-3">
+          <p class="text-sm font-medium text-green-800">{{ successMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="rounded-md bg-red-50 p-4 mb-4">
+      <div class="flex">
+        <div class="ml-3">
+          <p class="text-sm font-medium text-red-800">{{ errorMessage }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Form -->
+    <form *ngIf="currentMode === 'login'" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="mt-8 space-y-6">
+      <div class="space-y-4">
+        <div>
+          <label for="login-email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input
+            id="login-email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your email"
+          />
+          <p *ngIf="getFieldError(loginForm, 'email')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(loginForm, 'email') }}
+          </p>
+        </div>
+
+        <div>
+          <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            id="login-password"
+            formControlName="password"
+            type="password"
+            autocomplete="current-password"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your password"
+          />
+          <p *ngIf="getFieldError(loginForm, 'password')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(loginForm, 'password') }}
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="isLoading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </span>
+          {{ isLoading ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form *ngIf="currentMode === 'signup'" [formGroup]="signupForm" (ngSubmit)="onSignup()" class="mt-8 space-y-6">
+      <div class="space-y-4">
+        <div>
+          <label for="signup-username" class="block text-sm font-medium text-gray-700">Username</label>
+          <input
+            id="signup-username"
+            formControlName="username"
+            type="text"
+            autocomplete="username"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Choose a username"
+          />
+          <p *ngIf="getFieldError(signupForm, 'username')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(signupForm, 'username') }}
+          </p>
+        </div>
+
+        <div>
+          <label for="signup-email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input
+            id="signup-email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your email"
+          />
+          <p *ngIf="getFieldError(signupForm, 'email')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(signupForm, 'email') }}
+          </p>
+        </div>
+
+        <div>
+          <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            id="signup-password"
+            formControlName="password"
+            type="password"
+            autocomplete="new-password"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Create a password"
+          />
+          <p *ngIf="getFieldError(signupForm, 'password')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(signupForm, 'password') }}
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="isLoading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </span>
+          {{ isLoading ? 'Creating account...' : 'Create account' }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Verification Form -->
+    <form *ngIf="currentMode === 'verify'" [formGroup]="verifyForm" (ngSubmit)="onVerify()" class="mt-8 space-y-6">
+      <div class="space-y-4">
+        <div>
+          <label for="verify-email" class="block text-sm font-medium text-gray-700">Email address</label>
+          <input
+            id="verify-email"
+            formControlName="email"
+            type="email"
+            autocomplete="email"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter your email"
+          />
+          <p *ngIf="getFieldError(verifyForm, 'email')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(verifyForm, 'email') }}
+          </p>
+        </div>
+
+        <div>
+          <label for="verify-code" class="block text-sm font-medium text-gray-700">Verification Code</label>
+          <input
+            id="verify-code"
+            formControlName="verificationCode"
+            type="text"
+            class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Enter verification code"
+          />
+          <p *ngIf="getFieldError(verifyForm, 'verificationCode')" class="mt-1 text-sm text-red-600">
+            {{ getFieldError(verifyForm, 'verificationCode') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <button
+          type="submit"
+          [disabled]="isLoading"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span *ngIf="isLoading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <svg
+              class="animate-spin h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </span>
+          {{ isLoading ? 'Verifying...' : 'Verify Email' }}
+        </button>
+
+        <button
+          type="button"
+          (click)="onResendCode()"
+          [disabled]="isLoading"
+          class="w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{ isLoading ? 'Sending...' : 'Resend Code' }}
+        </button>
+      </div>
+
+      <div class="text-center">
+        <button
+          type="button"
+          (click)="switchMode('login')"
+          class="text-indigo-600 hover:text-indigo-500 text-sm font-medium"
+        >
+          Back to Login
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

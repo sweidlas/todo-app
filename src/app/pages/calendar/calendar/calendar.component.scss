@@ -1,0 +1,70 @@
+/* Calendar component styles */
+
+:host {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.content_overlay {
+  background-color: transparent !important;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.sticky-on-wide {
+  position: static;
+}
+
+.cover_top_left_cell {
+  display: none;
+}
+
+/* Or with specific width threshold using media queries */
+@media (min-width: 768px) {
+  .grandparent-wide > * > .sticky-on-wide {
+    position: sticky;
+    left: 0;
+  }
+
+  .cover_top_left_cell {
+    display: block;
+  }
+}
+
+/* Style the scrollbar */
+.scroll-container::-webkit-scrollbar {
+  width: 6px; /* Width of vertical scrollbar */
+  height: 6px; /* Height of horizontal scrollbar */
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: transparent; /* or a light color */
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Tailwind slate-300 equivalent */
+  border-radius: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Tailwind slate-400 equivalent */
+}
+
+.scroll-container::-webkit-scrollbar-corner {
+  display: none; /* Hide it completely */
+}

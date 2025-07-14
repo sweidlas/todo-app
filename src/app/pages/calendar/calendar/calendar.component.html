@@ -1,0 +1,170 @@
+<div class="relative flex flex-col w-full h-full overflow-hidden">
+  <!-- Navigation -->
+  <header
+    class="relative z-10 flex items-center justify-between lg:px-8 lg:py-6"
+    [ngClass]="{ 'opacity-0': !isLoaded, 'animate-fade-in': isLoaded }"
+    [style.animation-delay]="'0.2s'"
+  >
+    <div class="flex items-center justify-between w-full">
+      <span class="text-2xl font-semibold text-white drop-shadow-lg">Calendar</span>
+      <button
+        class="text-xl font-semibold text-white drop-shadow-lg rounded-md bg-blue-500 p-2"
+        (click)="createEvent()"
+      >
+        Create
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex flex-1 pt-4 flex-col overflow-hidden">
+    <div
+      class="flex items-center justify-between border border-white rounded-xl lg:mx-8 xs:w-[320px] lg:w-[480px] bg-black/20"
+    >
+      <button class="p-2 text-white hover:bg-white/10 rounded-l-xl flex-shrink-0" (click)="previousWeek()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-5 w-5"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+      </button>
+      <div
+        class="flex flex-1 items-center justify-center lg:text-lg font-medium text-white text-center min-w-0 overflow-hidden"
+      >
+        <h2 class="whitespace-pre">W{{ getWeekOfYear(currentWeekStart) }}:</h2>
+        <h2 class="">{{ formatDate(currentWeekStart) }}</h2>
+        <h2 class="whitespace-pre">-</h2>
+        <h2 class="">{{ formatDate(getLastDayOfISOWeek(currentWeekStart)) }}</h2>
+      </div>
+      <button class="p-2 text-white hover:bg-white/10 rounded-r-xl flex-shrink-0" (click)="nextWeek()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-5 w-5"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="p-2 border-b border-white/20"></div>
+    <div class="p-1"></div>
+
+    <!-- Calendar View -->
+
+    <!-- Week View -->
+    <div class="flex flex-1 overflow-hidden rounded-xl border border-white/20 shadow-xl">
+      <!-- Cover top left cell while scrolling -->
+      <div class="cover_top_left_cell absolute z-30">
+        <div class="grid grid-cols-8 min-w-[960px] border-white/20">
+          <div class="p-2 h-20 bg-black-custom text-center text-white/50 text-xs rounded-tl-xl"></div>
+        </div>
+      </div>
+      <div class="scroll-container flex grandparent-wide w-full flex-col bg-black/20 backdrop-blur-lg overflow-auto">
+        <!-- Week Header -->
+        <div
+          class="grid grid-cols-8 min-w-[960px] sticky top-0 z-[15] bg-black-custom backdrop-blur-lg border-b border-white/20"
+        >
+          <div class="p-2 h-20 text-center text-white/50 text-xs"></div>
+          <div
+            *ngFor="let day of weekDays; let i = index"
+            class="p-2 flex flex-col justify-center items-center text-center border-l border-white/20"
+          >
+            <div class="text-xs text-white/70 font-medium">{{ day }}</div>
+            <div
+              class="text-lg font-medium mt-1 text-white"
+              [ngClass]="{
+                'bg-blue-500 rounded-full w-8 h-8 flex items-center justify-center mx-auto': isToday(weekDay(i)),
+              }"
+            >
+              {{ weekDay(i) | date: 'd' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-8 min-w-[960px] border-b border-white/10">
+          <div class="border-b border-white/10 sticky-on-wide bg-black-custom pr-2 text-right text-xs text-white/70">
+            Todos
+          </div>
+          <div *ngFor="let _ of [0, 1, 2, 3, 4, 5, 6]; let dayIndex = index" class="border-l border-white/20 p-1">
+            <!-- Todos for this day -->
+            <div class="text-white text-xs">
+              <div *ngFor="let todo of getTodosForDay(dayIndex)">
+                <app-todo-item
+                  [todo]="todo"
+                  [config]="todoItemConfig"
+                  [locale]="locale"
+                  (itemClick)="selectTodo($event)"
+                ></app-todo-item>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Grid -->
+        <div class="min-w-[960px] grid grid-cols-8">
+          <div class="col-span-1 grid grid-cols-1 h-full sticky-on-wide z-10 bg-black-custom">
+            <!-- Time Labels -->
+            <div class="text-white/70">
+              <div *ngFor="let time of timeSlots" class="h-20 border-b border-white/10 pr-2 text-right text-xs">
+                {{ time > 12 ? time - 12 + ' PM' : time + ' AM' }}
+              </div>
+            </div>
+          </div>
+          <div class="col-span-7 flex-1">
+            <!-- Todos Row - spans all columns -->
+
+            <!-- Time Slots Grid -->
+            <div class="grid grid-cols-7">
+              <div
+                *ngFor="let _ of [0, 1, 2, 3, 4, 5, 6]; let dayIndex = index"
+                class="border-l border-white/20 relative"
+              >
+                <div *ngFor="let _ of timeSlots; let timeIndex = index" class="h-20 border-b border-white/10"></div>
+
+                <!-- Events -->
+                <div
+                  *ngFor="let event of getEventsForDay(dayIndex); let i = index"
+                  class="absolute rounded-md p-2 text-white text-xs shadow-md cursor-pointer transition-all duration-200 ease-in-out hover:translate-y-[-2px] hover:shadow-lg"
+                  [ngClass]="event.color"
+                  [style.top]="calculateEventPosition(event.start).top"
+                  [style.height]="calculateEventHeight(event.start, event.end)"
+                  [style.left.px]="4"
+                  [style.right.px]="4"
+                  (click)="handleEventClick(event)"
+                >
+                  <div class="font-medium overflow-hidden text-ellipsis line-clamp-2">{{ event.title }}</div>
+                  <div class="opacity-80 text-[10px] mt-1">
+                    {{ event.start | date: 'HH:mm' }} - {{ event.end | date: 'HH:mm' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Edit Calendar Event Modal -->
+  <app-edit-calendar-event
+    [show]="eventOverlay"
+    [selectedEvent]="selectedEvent || undefined"
+    (emitCloseOverlay)="closeOverlay()"
+  ></app-edit-calendar-event>
+</div>

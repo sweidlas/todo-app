@@ -1,0 +1,19 @@
+<img
+  src="/assets/seashore-beach-aerial-view-coast-blue-ocean-water-waves-sand-3840x2160-5482.jpg"
+  (load)="onImageLoad()"
+/>
+
+<main class="main">
+  <app-cube>
+    <router-outlet></router-outlet>
+  </app-cube>
+</main>
+
+<app-ocean-loading
+  class="loading_screen"
+  *ngIf="!(authService.allComponentsReady | async)"
+  [loadingMessage]="loadingState?.message"
+  [progress]="loadingState?.progress"
+>
+</app-ocean-loading>
+<app-navigation-bar id="navigation_bar"></app-navigation-bar>

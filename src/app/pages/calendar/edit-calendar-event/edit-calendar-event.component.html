@@ -1,0 +1,154 @@
+<app-overlay *ngIf="show">
+  <div class="grid grid-cols-[1fr_4fr_1fr] gap-2 items-center mb-4">
+    <button
+      class="flex flex-row items-center text-center justify-self-start font-semibold text-white drop-shadow-lg rounded-md bg-blue-500 py-1 px-2"
+      (click)="closeOverlay()"
+    >
+      <i class="icon bi-arrow-left text-xl mr-2"></i>
+      Back
+    </button>
+    <div class="justify-self-center text-center">
+      <h2 *ngIf="!selectedEvent" class="text-2xl font-semibold text-gray-900">Create Event</h2>
+      <!-- @todo i18n -->
+      <h2 *ngIf="selectedEvent" class="text-2xl font-semibold text-gray-900">Update Event</h2>
+      <!-- @todo i18n -->
+    </div>
+  </div>
+  <form [formGroup]="eventForm" class="flex-1 p-2 pb-4 overflow-y-auto">
+    <div class="mb-6">
+      <label for="title" class="block font-medium text-gray-700 mb-2">Title *</label>
+      <input
+        type="text"
+        id="title"
+        formControlName="title"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('title')"
+        [class.border-gray-300]="!isFieldInvalid('title')"
+        placeholder="Enter event title"
+      />
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('title')">
+        {{ getFieldError('title') }}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="description" class="block font-medium text-gray-700 mb-2">Description</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-vertical"
+        [class.border-red-500]="isFieldInvalid('description')"
+        [class.border-gray-300]="!isFieldInvalid('description')"
+        rows="3"
+        placeholder="Enter event description (optional)"
+      >
+      </textarea>
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('description')">
+        {{ getFieldError('description') }}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="location" class="block font-medium text-gray-700 mb-2">Location</label>
+      <input
+        type="text"
+        id="location"
+        formControlName="location"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('location')"
+        [class.border-gray-300]="!isFieldInvalid('location')"
+        placeholder="Enter event location (optional)"
+      />
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('location')">
+        {{ getFieldError('location') }}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="start" class="block font-medium text-gray-700 mb-2">Start Date & Time *</label>
+      <input
+        type="datetime-local"
+        id="start"
+        formControlName="start"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('start')"
+        [class.border-gray-300]="!isFieldInvalid('start')"
+      />
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('start')">
+        {{ getFieldError('start') }}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="end" class="block font-medium text-gray-700 mb-2">End Date & Time *</label>
+      <input
+        type="datetime-local"
+        id="end"
+        formControlName="end"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('end')"
+        [class.border-gray-300]="!isFieldInvalid('end')"
+      />
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('end')">
+        {{ getFieldError('end') }}
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label for="color" class="block font-medium text-gray-700 mb-2">Color *</label>
+      <select
+        id="color"
+        formControlName="color"
+        class="w-full px-3 py-2 border rounded-md text-base transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        [class.border-red-500]="isFieldInvalid('color')"
+        [class.border-gray-300]="!isFieldInvalid('color')"
+      >
+        <option value="" disabled>Select a color</option>
+        <option *ngFor="let color of colorOptions" [value]="color.value" class="flex items-center">
+          {{ color.label }}
+        </option>
+      </select>
+      <div class="mt-1 text-sm text-red-600" *ngIf="isFieldInvalid('color')">
+        {{ getFieldError('color') }}
+      </div>
+    </div>
+
+    <div class="flex flex-row gap-4 justify-between pt-2 border-t border-gray-200">
+      <button
+        type="submit"
+        class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        [disabled]="eventForm.invalid"
+        (click)="onSubmit()"
+      >
+        Save Event
+      </button>
+      <button
+        *ngIf="selectedEvent"
+        (click)="openDeleteConfirmOverlay()"
+        class="px-6 py-2 bg-red-500 text-white font-medium rounded-md focus:outline-none focus:ring-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        Delete Event
+      </button>
+    </div>
+  </form>
+</app-overlay>
+
+<app-overlay *ngIf="deleteConfirmOverlay">
+  <div class="flex flex-col items-center bg-white gap-4 justify-between p-4 rounded-lg">
+    Delete Event
+    <div class="flex flex-row gap-4 justify-between">
+      <button
+        (click)="closeDeleteConfirmOverlay()"
+        class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        Cancel
+      </button>
+      <button
+        class="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        (click)="deleteEvent()"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+</app-overlay>
